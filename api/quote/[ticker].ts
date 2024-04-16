@@ -15,10 +15,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     );
     await browser.close();
 
+    const { title, ...data } = stockData;
+
     return res.json({
-      name: parseValue(stockData.title),
-      ticker: parseValue(stockData.title, 'ticker'),
-      ...stockData,
+      name: parseValue(title),
+      ticker: parseValue(title, 'ticker'),
+      ...data,
     });
   } catch (error) {
     console.error('Error fetching page:', error);
