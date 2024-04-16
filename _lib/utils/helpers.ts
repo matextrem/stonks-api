@@ -17,7 +17,7 @@ export async function fetchStockData(
       service as keyof (typeof API_PROVIDERS)[typeof PROVIDER]['endpoints']
     ];
   const endpoint = `${API_URL}${route}/${ticker}`;
-  await page.goto(endpoint);
+  page.goto(endpoint);
   await acceptConsent(page);
   return await extractStockData(page);
 }

@@ -1,5 +1,5 @@
 import chrome from '@sparticuz/chromium';
-import puppeteer, { Browser } from 'puppeteer-core';
+import puppeteer, { Browser, Page } from 'puppeteer-core';
 
 export const getBrowser = async (): Promise<Browser> => {
   let browser;
@@ -21,9 +21,21 @@ export const getBrowser = async (): Promise<Browser> => {
       : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
 
     headless: true,
-    defaultViewport: chrome.defaultViewport,
+    defaultViewport: { width: 1280, height: 1024 },
     ignoreHTTPSErrors: true,
   });
 
   return browser;
+};
+
+export const abortUnnecessaryRequests = (page: Page) => {
+  page.on('request', (request) => {
+    if (
+      ['image', 'stylesheet', 'font'].indexOf(request.resourceType()) !== -1
+    ) {
+      request.abort();
+    } else {
+      request.continue();
+    }
+  });
 };
