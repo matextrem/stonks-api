@@ -20,7 +20,7 @@
   "scripts": {
     "start:dev": "vercel dev",
     "start": "vercel start",
-    "build": "tsc",
+    "build": "NODE_ENV=production && tsc",
     "deploy": "vercel --prod"
   },
   "engines": {
