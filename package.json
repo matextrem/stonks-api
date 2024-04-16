@@ -1,0 +1,29 @@
+{
+  "name": "stonks-api",
+  "version": "1.0.0",
+  "description": "An API for fetching stock data from different sources using Puppeteer",
+  "author": {
+    "name": "Mati Dastugue",
+    "email": "matiasdastugue@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/matextrem/stonks-api"
+  },
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "@vercel/node": "^2.9.6",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "start:dev": "vercel dev",
+    "start": "vercel start",
+    "build": "tsc",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "puppeteer": "^22.6.5"
+  }
+}
