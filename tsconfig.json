@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
     "sourceMap": true,
-    "outDir": "dist",
+    "outDir": "./build",
     "target": "ESNext",
     "module": "CommonJS",
     "strict": true,
     "lib": ["esnext"],
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
     "esModuleInterop": true
-  }
+  },
+  "exclude": ["node_modules", "build"]
 }
