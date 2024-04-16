@@ -32,20 +32,16 @@ export async function extractStockData(page: Page) {
   // Wait for the page to be fully loaded by waiting for the title to be visible
   await page.waitForSelector(API_SELECTORS.title, { visible: true });
 
-  const title = await page.$eval(
-    API_SELECTORS.title,
-    (el: Element) => el.textContent
-  );
-  const price = await page.$eval(API_SELECTORS.price, (el: Element) =>
+  const title = await page.$eval(API_SELECTORS.title, (el) => el.textContent);
+  const price = await page.$eval(API_SELECTORS.price, (el) =>
     el.getAttribute('data-value')
   );
-  const priceChange = await page.$eval(
-    API_SELECTORS.priceChange,
-    (el: Element) => el.getAttribute('data-value')
+  const priceChange = await page.$eval(API_SELECTORS.priceChange, (el) =>
+    el.getAttribute('data-value')
   );
   const percentageChange = await page.$eval(
     API_SELECTORS.percentageChange,
-    (el: Element) => el.getAttribute('data-value')
+    (el) => el.getAttribute('data-value')
   );
 
   return {
