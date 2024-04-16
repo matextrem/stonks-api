@@ -1,9 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import puppeteer from 'puppeteer';
-import { fetchStockData, parseValue } from '../../_lib/utils';
+
+import { fetchStockData, parseValue, getBrowser } from '../../_lib/utils';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await getBrowser();
   try {
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 1024 });

@@ -1,4 +1,4 @@
-import { Page } from 'puppeteer';
+import { Page } from 'puppeteer-core';
 import { API_PROVIDERS, PROVIDER } from './constants';
 
 const API_URL = API_PROVIDERS[PROVIDER].baseUrl;
@@ -16,7 +16,7 @@ export async function fetchStockData(
     API_PROVIDERS[PROVIDER].endpoints[
       service as keyof (typeof API_PROVIDERS)[typeof PROVIDER]['endpoints']
     ];
-  const endpoint = `${API_URL}${route}/${ticker}?p=${ticker}&.tsrc=fin-srch`;
+  const endpoint = `${API_URL}${route}/${ticker}`;
   await page.goto(endpoint);
   await acceptConsent(page);
   return await extractStockData(page);
