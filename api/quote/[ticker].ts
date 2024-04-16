@@ -4,7 +4,8 @@ import {
   fetchStockData,
   parseValue,
   getBrowser,
-  abortUnnecessaryRequests,
+  closeBrowser,
+  cacheRequests,
 } from '../../_lib/utils';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -12,15 +13,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const page = (await browser.pages())[0];
     await page.setRequestInterception(true);
-    abortUnnecessaryRequests(page);
-
+    cacheRequests(page);
     const stockData = await fetchStockData(
       page,
       'quote',
       req.query.ticker as string
     );
-
-    browser.close();
 
     const { title, ...data } = stockData;
 
@@ -31,9 +29,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   } catch (error) {
     console.error('Error fetching page:', error);
-    browser.close();
     return res
       .status(500)
       .json({ error: `Failed to fetch data for ${req.query.ticker}` });
+  } finally {
+    await closeBrowser(browser);
   }
 }

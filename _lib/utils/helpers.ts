@@ -17,15 +17,16 @@ export async function fetchStockData(
       service as keyof (typeof API_PROVIDERS)[typeof PROVIDER]['endpoints']
     ];
   const endpoint = `${API_URL}${route}/${ticker}`;
-  page.goto(endpoint);
+  await page.goto(endpoint, { waitUntil: 'domcontentloaded' });
   await acceptConsent(page);
+
   return await extractStockData(page);
 }
 
 export async function acceptConsent(page: Page) {
   const consentSelector = '.accept-all';
   await page.waitForSelector(consentSelector);
-  page.click(consentSelector);
+  await page.click(consentSelector);
 }
 
 export async function extractStockData(page: Page) {
