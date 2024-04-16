@@ -24,13 +24,13 @@ export async function fetchStockData(
 
 export async function acceptConsent(page: Page) {
   const consentSelector = '.accept-all';
-  await page.waitForSelector(consentSelector, { visible: true });
-  await page.click(consentSelector);
+  await page.waitForSelector(consentSelector);
+  page.click(consentSelector);
 }
 
 export async function extractStockData(page: Page) {
   // Wait for the page to be fully loaded by waiting for the title to be visible
-  await page.waitForSelector(API_SELECTORS.title, { visible: true });
+  await page.waitForSelector(API_SELECTORS.title);
 
   const title = await page.$eval(API_SELECTORS.title, (el) => el.textContent);
   const price = await page.$eval(API_SELECTORS.price, (el) =>
