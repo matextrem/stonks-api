@@ -1,54 +1,43 @@
-import { Page } from 'puppeteer-core';
+import * as cheerio from 'cheerio';
 import { API_PROVIDERS, PROVIDER } from './constants';
+import { parseURL } from './parser';
 
 const API_URL = API_PROVIDERS[PROVIDER].baseUrl;
 const API_SELECTORS = API_PROVIDERS[PROVIDER].selectors;
 
-export async function fetchStockData(
-  page: Page,
-  service: string,
-  ticker?: string
-) {
+export async function fetchStockData(service: string, ticker?: string) {
   if (!ticker) {
     throw new Error('No ticker provided');
   }
-  const route =
+  const endpoint =
     API_PROVIDERS[PROVIDER].endpoints[
       service as keyof (typeof API_PROVIDERS)[typeof PROVIDER]['endpoints']
     ];
-  const endpoint = `${API_URL}${route}/${ticker}`;
-  await page.goto(endpoint, { waitUntil: 'domcontentloaded' });
-  await acceptConsent(page);
 
-  return await extractStockData(page);
+  const uri = parseURL(API_URL, endpoint, ticker);
+  const response = await fetch(uri);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch data');
+  }
+  const body = await response.text();
+  const $ = cheerio.load(body);
+  return await extractStockData($);
 }
 
-export async function acceptConsent(page: Page) {
-  const consentSelector = '.accept-all';
-  await page.waitForSelector(consentSelector);
-  await page.click(consentSelector);
-}
-
-export async function extractStockData(page: Page) {
-  // Wait for the page to be fully loaded by waiting for the title to be visible
-  await page.waitForSelector(API_SELECTORS.title);
-
-  const title = await page.$eval(API_SELECTORS.title, (el) => el.textContent);
-  const price = await page.$eval(API_SELECTORS.price, (el) =>
-    el.getAttribute('data-value')
-  );
-  const priceChange = await page.$eval(API_SELECTORS.priceChange, (el) =>
-    el.getAttribute('data-value')
-  );
-  const percentageChange = await page.$eval(
-    API_SELECTORS.percentageChange,
-    (el) => el.getAttribute('data-value')
-  );
+export async function extractStockData($: cheerio.CheerioAPI) {
+  const data = {} as Record<string, string>;
+  for (let key in API_SELECTORS) {
+    const { selector, extractor } = API_SELECTORS[key] as any;
+    const selectedElement = $(selector);
+    data[key] = extractor(selectedElement, $);
+  }
 
   return {
-    title,
-    price: parseFloat(price as string),
-    priceChange: parseFloat(priceChange as string),
-    percentageChange: parseFloat(percentageChange as string),
+    name: data.name,
+    ticker: data.ticker,
+    price: parseFloat(data.price as string),
+    change: parseFloat(data.change as string),
+    percentageChange: parseFloat(data.percentageChange as string),
   };
 }

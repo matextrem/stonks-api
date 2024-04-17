@@ -1,14 +1,13 @@
-export const parseValue = (value?: string | null, property = 'name') => {
-  if (!value) {
-    return 'Unknown';
-  }
-  const match = value.match(/(.*) \((.*)\)/);
-  if (!match) {
-    return value;
-  }
-  if (property === 'name') {
-    return match[1];
+import { Endpoint } from './types';
+
+export const parseURL = (apiUrl: string, endpoint: Endpoint, data: string) => {
+  let uri = `${apiUrl}/${endpoint.route}`;
+
+  if (endpoint.query) {
+    uri = `${uri}?${endpoint.query}=${data}`;
+  } else {
+    uri = `${uri}/${data}`;
   }
 
-  return match[2];
+  return uri;
 };

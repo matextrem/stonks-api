@@ -1,11 +1,11 @@
 # Stonks API
 
-Stonks API is a serverless API developed to fetch stock data from multiple providers using Puppeteer, with the initial implementation focusing on Yahoo Finance. Hosted on Vercel, this API aims to extend support to various financial data providers, making it a versatile tool for accessing stock market data.
+Stonks API is a serverless API developed to fetch stock data from multiple providers using Cheerio, with the initial implementation focusing on [Finvinz](https://finviz.com/). Hosted on Vercel, this API aims to extend support to various financial data providers, making it a versatile tool for accessing stock market data.
 
 ## Features
 
 - Fetch stock data including price, price changes, and percentage changes.
-- Currently supports Yahoo Finance.
+- Currently supports Finvinz.
 - Designed to easily extend support to additional providers.
 
 ## Getting Started
@@ -15,6 +15,8 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 What things you need to install the software and how to install them:
+
+Node version: 18.x
 
 ```bash
 npm install -g vercel
@@ -41,7 +43,7 @@ A step by step series of examples that tell you how to get a development env run
    Create a `.env` file in the root directory and add the following:
 
    ```
-   API_PROVIDER=yahoo
+   API_PROVIDER=finvinz
    ```
 
 4. Run the development server:
@@ -64,25 +66,64 @@ Replace `AAPL` with your desired stock ticker.
 The API is designed to be extendable with multiple providers. Currently, it is configured as follows:
 
 ```typescript
-export enum ApiProviders {
-  YahooFinance = 'yahoo',
-}
-
 export const PROVIDER: ApiProviders =
-  (process.env.API_PROVIDER as ApiProviders) || ApiProviders.YahooFinance;
+  (process.env.API_PROVIDER as ApiProviders) || ApiProviders.Finviz;
 
-export const API_PROVIDERS = {
-  [ApiProviders.YahooFinance]: {
-    baseUrl: 'https://finance.yahoo.com',
+export const API_PROVIDERS: ApiProvidersConfig = {
+  [ApiProviders.Finviz]: {
+    baseUrl: 'https://finviz.com',
     endpoints: {
-      quote: '/quote',
+      quote: {
+        route: 'quote.ashx',
+        query: 't',
+      },
     },
     selectors: {
-      title: '.svelte-ufs8hf',
-      price: 'fin-streamer.livePrice',
-      priceChange: 'fin-streamer.priceChange[data-field="regularMarketChange"]',
-      percentageChange:
-        'fin-streamer.priceChange[data-field="regularMarketChangePercent"]',
+      name: {
+        selector: '.quote-header_ticker-wrapper_company > a',
+        extractor: (element: cheerio.Cheerio<cheerio.Element>) =>
+          element.text().trim(),
+      },
+      ticker: {
+        selector: '.quote-header_ticker-wrapper_ticker',
+        extractor: (element: cheerio.Cheerio<cheerio.Element>) =>
+          element.text().trim(),
+      },
+      price: {
+        selector: '.quote-price_wrapper_price',
+        extractor: (element: cheerio.Cheerio<cheerio.Element>) =>
+          element.text().trim(),
+      },
+      change: {
+        selector: '.quote-price_wrapper_change > tbody > tr',
+        extractor: (
+          element: cheerio.Cheerio<cheerio.Element>,
+          $: cheerio.CheerioAPI
+        ) => {
+          let value = '';
+          element.find('.sr-only').each((i: number, el: cheerio.Element) => {
+            if ($(el).text().includes('Dollar')) {
+              value = $(el).parent().text().replace($(el).text(), '').trim();
+            }
+          });
+          return value;
+        },
+      },
+      percentageChange: {
+        selector: '.quote-price_wrapper_change > tbody > tr',
+        extractor: (
+          element: cheerio.Cheerio<cheerio.Element>,
+          $: cheerio.CheerioAPI
+        ) => {
+          let value = '';
+          element.find('.sr-only').each((i: number, el: cheerio.Element) => {
+            if ($(el).text().includes('Percentage')) {
+              value = $(el).parent().text().replace($(el).text(), '').trim();
+            }
+          });
+          return value;
+        },
+      },
     },
   },
 };
