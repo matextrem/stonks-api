@@ -1,3 +1,6 @@
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
+![BuyMeACoffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)
 # Stonks API
 
 Stonks API is a serverless API developed to fetch stock data from multiple providers using Cheerio, with the initial implementation focusing on [Finvinz](https://finviz.com/). Hosted on Vercel, this API aims to extend support to various financial data providers, making it a versatile tool for accessing stock market data.
