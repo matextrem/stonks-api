@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 
-import { ApiProviders, ApiProvidersConfig } from './types';
+import { ApiProviders, ApiProvidersConfig, QuoteTypes } from './types';
 
 export const PROVIDER: ApiProviders =
   (process.env.API_PROVIDER as ApiProviders) || ApiProviders.Finviz;
@@ -10,7 +10,7 @@ export const API_PROVIDERS: ApiProvidersConfig = {
     baseUrl: 'https://finviz.com',
     fallback: ApiProviders.Investing,
     endpoints: {
-      quote: {
+      stock: {
         route: 'quote.ashx',
         query: 't',
       },
@@ -66,7 +66,7 @@ export const API_PROVIDERS: ApiProvidersConfig = {
   [ApiProviders.Investing]: {
     baseUrl: 'https://www.investing.com',
     endpoints: {
-      quote: {
+      stock: {
         route: 'equities',
       },
       forex: {
@@ -121,46 +121,58 @@ export const API_PROVIDERS: ApiProvidersConfig = {
   },
 };
 
-export const QUOTE_REPLACEMENTS = {
-  forex: {
-    EURUSD: 'eur-usd',
-    GBPUSD: 'gbp-usd',
-    USDJPY: 'usd-jpy',
-    USDCAD: 'usd-cad',
-    USDCHF: 'usd-chf',
-    AUDUSD: 'aud-usd',
-    NZDUSD: 'nzd-usd',
-    EURGBP: 'eur-gbp',
-    EURJPY: 'eur-jpy',
-    XAUUSD: 'xau-usd',
-  },
-  commodity: {
-    CRUDEOIL: 'crude-oil',
-    BRENT: 'brent-oil',
-    NATURALGAS: 'natural-gas',
-    CC: 'us-cocoa',
-    CT: 'us-cotton-no.2',
-    JO: 'orange-juice',
-    KC: 'us-coffee-c',
-    LB: 'lumber',
-    SB: 'us-sugar-no11',
-    ZC: 'us-corn',
-    ZL: 'us-soybean-oil',
-    ZM: 'us-soybean-meal',
-    ZS: 'us-soybeans',
-    ZW: 'us-wheat',
-    ZO: 'oats',
-    ZR: 'rough-rice',
-    RS: 'canola-futures',
-  },
-  future: {
-    ES: 'us-spx-500-futures',
-    NQ: 'nq-100-futures',
-    YM: 'us-30-futures',
-    ER2: 'smallcap-2000-futures',
-    NKD: 'japan-225-futures',
-    EX: 'eu-stocks-50-futures',
-    DY: 'germany-30-futures',
-    VX: 'us-spx-vix-futures',
+export const QUOTE_REPLACEMENTS: Record<
+  ApiProviders,
+  {
+    forex?: Record<string, { value: string; route?: string }>;
+    commodity?: Record<string, { value: string; route?: string }>;
+    future?: Record<string, { value: string; route?: string }>;
+    stock?: Record<string, { value: string; route?: string }>;
+  }
+> = {
+  [ApiProviders.Finviz]: {},
+  [ApiProviders.Investing]: {
+    [QuoteTypes.FOREX]: {
+      EURUSD: { value: 'eur-usd' },
+      GBPUSD: { value: 'gbp-usd' },
+      USDJPY: { value: 'usd-jpy' },
+      USDCAD: { value: 'usd-cad' },
+      USDCHF: { value: 'usd-chf' },
+      AUDUSD: { value: 'aud-usd' },
+      NZDUSD: { value: 'nzd-usd' },
+      EURGBP: { value: 'eur-gbp' },
+      EURJPY: { value: 'eur-jpy' },
+      XAUUSD: { value: 'xau-usd' },
+    },
+    [QuoteTypes.COMMODITY]: {
+      CRUDEOIL: { value: 'crude-oil' },
+      BRENT: { value: 'brent-oil' },
+      NATURALGAS: { value: 'natural-gas' },
+      CC: { value: 'us-cocoa' },
+      CT: { value: 'us-cotton-no.2' },
+      JO: { value: 'orange-juice' },
+      KC: { value: 'us-coffee-c' },
+      LB: { value: 'lumber' },
+      SB: { value: 'us-sugar-no11' },
+      ZC: { value: 'us-corn' },
+      ZL: { value: 'us-soybean-oil' },
+      ZM: { value: 'us-soybean-meal' },
+      ZS: { value: 'us-soybeans' },
+      ZW: { value: 'us-wheat' },
+      ZO: { value: 'oats' },
+      ZR: { value: 'rough-rice' },
+      RS: { value: 'canola-futures' },
+    },
+    [QuoteTypes.FUTURE]: {
+      ES: { value: 'us-spx-500-futures' },
+      NQ: { value: 'nq-100-futures' },
+      YM: { value: 'us-30-futures' },
+      ER2: { value: 'smallcap-2000-futures' },
+      NKD: { value: 'japan-225-futures' },
+      EX: { value: 'eu-stocks-50-futures' },
+      DY: { value: 'germany-30-futures' },
+      VX: { value: 'us-spx-vix-futures' },
+    },
+    [QuoteTypes.STOCK]: {},
   },
 };

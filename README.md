@@ -60,11 +60,27 @@ A step by step series of examples that tell you how to get a development env run
 To fetch stock data from the supported providers, navigate to:
 
 ```
-http://localhost:3000/api/quote/AAPL
+http://localhost:3000/api/quote/AAPL // Default to type=stock
 ```
-
 Replace `AAPL` with your desired stock ticker.
 
+We also support the following types:
+
+- FOREX 
+
+```
+http://localhost:3000/api/quote/EURUSD?type=forex
+```
+- COMMODITIES
+
+```
+http://localhost:3000/api/quote/GOLD?type=commodity
+```
+- FUTURES 
+
+```
+http://localhost:3000/api/quote/NQ?type=future
+```
 ## API Providers Configuration
 
 The API is designed to be extendable with multiple providers. It is configured as follows:
@@ -78,7 +94,7 @@ export const API_PROVIDERS: ApiProvidersConfig = {
     baseUrl: 'https://finviz.com',
     fallback: ApiProviders.Investing,
     endpoints: {
-      quote: {
+      stock: {
         route: 'quote.ashx',
         query: 't',
       },

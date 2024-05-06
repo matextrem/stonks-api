@@ -1,12 +1,12 @@
 import * as cheerio from 'cheerio';
 import { API_PROVIDERS, PROVIDER, QUOTE_REPLACEMENTS } from './constants';
 import { parseURL } from './parser';
-import { ApiProviders } from './types';
+import { ApiProviders, Endpoint, QuoteTypes } from './types';
 
 const API_URL = API_PROVIDERS[PROVIDER].baseUrl;
 const API_SELECTORS = API_PROVIDERS[PROVIDER].selectors;
 
-export async function fetchStockData(service: string, ticker?: string) {
+export async function fetchStockData(service: QuoteTypes, ticker?: string) {
   if (!ticker) {
     throw new Error('No ticker provided');
   }
@@ -25,8 +25,13 @@ export async function fetchStockData(service: string, ticker?: string) {
         service as keyof (typeof API_PROVIDERS)[typeof PROVIDER]['endpoints']
       ];
   }
+  const { value, route } = getTickerReplaced(service, ticker, fallbackProvider);
+  const uri = parseURL(
+    apiUrl,
+    route ? ({ route } as Endpoint) : endpoint,
+    value.toLowerCase()
+  );
 
-  const uri = parseURL(apiUrl, endpoint, ticker.toLowerCase());
   const response = await fetch(uri);
 
   if (!response.ok) {
@@ -68,15 +73,19 @@ export async function extractStockData(
   };
 }
 
-export const getTickerReplaced = (type: string, ticker: string) => {
+const getTickerReplaced = (
+  type: QuoteTypes,
+  ticker: string,
+  provider: ApiProviders
+) => {
+  const tickerUpper = ticker.toUpperCase();
+
   if (type) {
-    const replacement =
-      QUOTE_REPLACEMENTS[type as keyof typeof QUOTE_REPLACEMENTS];
-    if (replacement) {
-      return (
-        replacement[ticker.toUpperCase() as keyof typeof replacement] || ticker
-      );
+    const replacement = QUOTE_REPLACEMENTS[provider][type];
+
+    if (replacement && replacement[tickerUpper]) {
+      return replacement[tickerUpper];
     }
   }
-  return ticker;
+  return { value: ticker, route: '' };
 };

@@ -10,6 +10,13 @@ export interface Endpoint {
   query?: string;
 }
 
+export enum QuoteTypes {
+  STOCK = 'stock',
+  COMMODITY = 'commodity',
+  FOREX = 'forex',
+  FUTURE = 'future',
+}
+
 interface SelectorConfig {
   selector: string;
   fallbackSelector?: string;
