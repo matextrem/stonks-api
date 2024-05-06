@@ -1,6 +1,6 @@
 {
   "name": "stonks-api",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "An API for fetching stock data from different sources using Puppeteer",
   "author": {
     "name": "Mati Dastugue",
