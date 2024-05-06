@@ -2,7 +2,6 @@
 <a href="https://vercel.com" target="_blank"><img src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" height="30"></a>
 <a href="https://www.buymeacoffee.com/matextrem" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee" height="30"></a>
 
-
 # Stonks API
 
 Stonks API is a serverless API developed to fetch stock data from multiple providers using Cheerio, with the initial implementation focusing on [Finvinz](https://finviz.com/). Hosted on Vercel, this API aims to extend support to various financial data providers, making it a versatile tool for accessing stock market data.
@@ -68,7 +67,7 @@ Replace `AAPL` with your desired stock ticker.
 
 ## API Providers Configuration
 
-The API is designed to be extendable with multiple providers. Currently, it is configured as follows:
+The API is designed to be extendable with multiple providers. It is configured as follows:
 
 ```typescript
 export const PROVIDER: ApiProviders =
@@ -77,6 +76,7 @@ export const PROVIDER: ApiProviders =
 export const API_PROVIDERS: ApiProvidersConfig = {
   [ApiProviders.Finviz]: {
     baseUrl: 'https://finviz.com',
+    fallback: ApiProviders.Investing,
     endpoints: {
       quote: {
         route: 'quote.ashx',
@@ -133,6 +133,11 @@ export const API_PROVIDERS: ApiProvidersConfig = {
   },
 };
 ```
+
+## Supported providers
+
+- [Finviz](https://finviz.com/)
+- [Investing.com](https://www.investing.com/)
 
 ## Contributing
 
