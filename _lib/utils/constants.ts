@@ -145,6 +145,11 @@ export const QUOTE_REPLACEMENTS: Record<
       XAUUSD: { value: 'xau-usd' },
     },
     [QuoteTypes.COMMODITY]: {
+      SI: { value: 'silver' },
+      GC: { value: 'gold' },
+      PL: { value: 'platinum' },
+      HG: { value: 'copper' },
+      PA: { value: 'palladium' },
       CRUDEOIL: { value: 'crude-oil' },
       BRENT: { value: 'brent-oil' },
       NATURALGAS: { value: 'natural-gas' },
