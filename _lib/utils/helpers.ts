@@ -25,7 +25,11 @@ export async function fetchStockData(service: QuoteTypes, ticker?: string) {
         service as keyof (typeof API_PROVIDERS)[typeof PROVIDER]['endpoints']
       ];
   }
-  const { value, route } = getTickerReplaced(service, ticker, fallbackProvider);
+  const { value, route, symbol } = getTickerReplaced(
+    service,
+    ticker,
+    fallbackProvider
+  );
   const uri = parseURL(
     apiUrl,
     route ? ({ route } as Endpoint) : endpoint,
@@ -39,12 +43,13 @@ export async function fetchStockData(service: QuoteTypes, ticker?: string) {
   }
   const body = await response.text();
   const $ = cheerio.load(body);
-  return await extractStockData($, fallbackProvider);
+  return await extractStockData($, fallbackProvider, symbol);
 }
 
 export async function extractStockData(
   $: cheerio.CheerioAPI,
-  fallbackProvider?: ApiProviders
+  fallbackProvider?: ApiProviders,
+  customSymbol?: string
 ) {
   const data = {} as Record<string, string>;
   const selectors = !!fallbackProvider
@@ -66,7 +71,7 @@ export async function extractStockData(
 
   return {
     name: data.name,
-    ticker: data.ticker,
+    ticker: customSymbol || data.ticker,
     price: parseFloat(data.price as string),
     change: parseFloat(data.change as string),
     percentageChange: parseFloat(data.percentageChange as string),
@@ -87,5 +92,5 @@ const getTickerReplaced = (
       return replacement[tickerUpper];
     }
   }
-  return { value: ticker, route: '' };
+  return { value: ticker, route: '', symbol: '' };
 };

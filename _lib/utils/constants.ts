@@ -124,10 +124,13 @@ export const API_PROVIDERS: ApiProvidersConfig = {
 export const QUOTE_REPLACEMENTS: Record<
   ApiProviders,
   {
-    forex?: Record<string, { value: string; route?: string }>;
-    commodity?: Record<string, { value: string; route?: string }>;
-    future?: Record<string, { value: string; route?: string }>;
-    stock?: Record<string, { value: string; route?: string }>;
+    forex?: Record<string, { value: string; route?: string; symbol?: string }>;
+    commodity?: Record<
+      string,
+      { value: string; route?: string; symbol?: string }
+    >;
+    future?: Record<string, { value: string; route?: string; symbol?: string }>;
+    stock?: Record<string, { value: string; route?: string; symbol?: string }>;
   }
 > = {
   [ApiProviders.Finviz]: {},
@@ -145,8 +148,8 @@ export const QUOTE_REPLACEMENTS: Record<
       XAUUSD: { value: 'xau-usd' },
     },
     [QuoteTypes.COMMODITY]: {
-      SI: { value: 'silver' },
-      GC: { value: 'gold' },
+      SI: { value: 'silver', symbol: 'SI' },
+      GC: { value: 'gold', symbol: 'GC' },
       PL: { value: 'platinum' },
       HG: { value: 'copper' },
       PA: { value: 'palladium' },
