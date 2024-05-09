@@ -25,11 +25,13 @@ export async function fetchStockData(service: QuoteTypes, ticker?: string) {
         service as keyof (typeof API_PROVIDERS)[typeof PROVIDER]['endpoints']
       ];
   }
+
   const { value, route, symbol } = getTickerReplaced(
     service,
     ticker,
     fallbackProvider
   );
+  
   const uri = parseURL(
     apiUrl,
     route ? ({ route } as Endpoint) : endpoint,
@@ -43,6 +45,7 @@ export async function fetchStockData(service: QuoteTypes, ticker?: string) {
   }
   const body = await response.text();
   const $ = cheerio.load(body);
+  
   return await extractStockData($, fallbackProvider, symbol);
 }
 
