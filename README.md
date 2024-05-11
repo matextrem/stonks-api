@@ -99,11 +99,26 @@ export const PROVIDER: ApiProviders =
 export const API_PROVIDERS: ApiProvidersConfig = {
   [ApiProviders.Finviz]: {
     baseUrl: 'https://finviz.com',
-    fallback: ApiProviders.Investing,
     endpoints: {
       stock: {
         route: 'quote.ashx',
         query: 't',
+      },
+      forex: {
+        route: 'currencies',
+        fallback: ApiProviders.Investing,
+      },
+      commodity: {
+        route: 'commodities',
+        fallback: ApiProviders.Investing,
+      },
+      future: {
+        route: 'indices',
+        fallback: ApiProviders.Investing,
+      },
+      crypto: {
+        route: 'crypto',
+        fallback: ApiProviders.CoinMarketCap,
       },
     },
     selectors: {
@@ -153,7 +168,7 @@ export const API_PROVIDERS: ApiProvidersConfig = {
         },
       },
     },
-  },
+  }
 };
 ```
 
@@ -161,6 +176,7 @@ export const API_PROVIDERS: ApiProvidersConfig = {
 
 - [Finviz](https://finviz.com/)
 - [Investing.com](https://www.investing.com/)
+- [CoinMarketCap](https://coinmarketcap.com/)
 
 ## Contributing
 
