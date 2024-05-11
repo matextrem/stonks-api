@@ -78,6 +78,9 @@ export const API_PROVIDERS: ApiProvidersConfig = {
       future: {
         route: 'indices',
       },
+      crypto: {
+        route: 'crypto',
+      },
     },
     selectors: {
       name: {
@@ -131,6 +134,7 @@ export const QUOTE_REPLACEMENTS: Record<
     >;
     future?: Record<string, { value: string; route?: string; symbol?: string }>;
     stock?: Record<string, { value: string; route?: string; symbol?: string }>;
+    crypto?: Record<string, { value: string; route?: string; symbol?: string }>;
   }
 > = {
   [ApiProviders.Finviz]: {},
@@ -146,6 +150,7 @@ export const QUOTE_REPLACEMENTS: Record<
       EURGBP: { value: 'eur-gbp' },
       EURJPY: { value: 'eur-jpy' },
       XAUUSD: { value: 'xau-usd' },
+      BTCUSD: { value: 'bitcoin', route: 'crypto', symbol: 'BTC/USD' },
     },
     [QuoteTypes.COMMODITY]: {
       SI: { value: 'silver', symbol: 'SI' },
@@ -182,5 +187,26 @@ export const QUOTE_REPLACEMENTS: Record<
       VX: { value: 'us-spx-vix-futures' },
     },
     [QuoteTypes.STOCK]: {},
+    [QuoteTypes.CRYPTO]: {
+      BTC: { value: 'bitcoin', symbol: 'BTC' },
+      ETH: { value: 'ethereum', symbol: 'ETH' },
+      XRP: { value: 'xrp', symbol: 'XRP' },
+      LTC: { value: 'litecoin', symbol: 'LTC' },
+      ADA: { value: 'cardano', symbol: 'ADA' },
+      BNB: { value: 'bnb', symbol: 'BNB' },
+      DOT: { value: 'polkadot-new', symbol: 'DOT' },
+      XLM: { value: 'stellar', symbol: 'XLM' },
+      USDT: { value: 'tether', symbol: 'USDT' },
+      DOGE: { value: 'dogecoin', symbol: 'DOGE' },
+      LINK: { value: 'chainlink', symbol: 'LINK' },
+      XMR: { value: 'monero', symbol: 'XMR' },
+      TRX: { value: 'tron', symbol: 'TRX' },
+      EOS: { value: 'eos', symbol: 'EOS' },
+      VET: { value: 'vechain', symbol: 'VET' },
+      XTZ: { value: 'tezos', symbol: 'XTZ' },
+      FIL: { value: 'filecoin', symbol: 'FIL' },
+      XEM: { value: 'nem', symbol: 'XEM' },
+      AAVE: { value: 'aave', symbol: 'AAVE' },
+    },
   },
 };

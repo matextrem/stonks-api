@@ -81,6 +81,13 @@ http://localhost:3000/api/quote/GOLD?type=commodity
 ```
 http://localhost:3000/api/quote/NQ?type=future
 ```
+
+- CRYPTO 
+
+```
+http://localhost:3000/api/quote/ethereum?type=crypto
+```
+
 ## API Providers Configuration
 
 The API is designed to be extendable with multiple providers. It is configured as follows:

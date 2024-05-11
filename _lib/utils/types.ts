@@ -15,6 +15,7 @@ export enum QuoteTypes {
   COMMODITY = 'commodity',
   FOREX = 'forex',
   FUTURE = 'future',
+  CRYPTO = 'crypto',
 }
 
 interface SelectorConfig {

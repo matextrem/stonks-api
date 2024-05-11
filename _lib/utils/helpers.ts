@@ -31,14 +31,21 @@ export async function fetchStockData(service: QuoteTypes, ticker?: string) {
     ticker,
     fallbackProvider
   );
-  
+
   const uri = parseURL(
     apiUrl,
     route ? ({ route } as Endpoint) : endpoint,
     value.toLowerCase()
   );
 
-  const response = await fetch(uri);
+  const options = {
+    headers: {
+      priority: 'u=0, i',
+    },
+    method: 'GET',
+  };
+
+  const response = await fetch(uri, options);
 
   if (!response.ok) {
     throw new Error('Failed to fetch data');
