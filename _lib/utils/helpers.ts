@@ -17,8 +17,9 @@ export async function fetchStockData(service: QuoteTypes, ticker?: string) {
 
   let fallbackProvider: ApiProviders = PROVIDER as ApiProviders;
   let apiUrl: string = API_URL;
-  if (!endpoint) {
-    fallbackProvider = API_PROVIDERS[PROVIDER].fallback as ApiProviders;
+
+  if (endpoint.fallback) {
+    fallbackProvider = endpoint.fallback;
     apiUrl = API_PROVIDERS[fallbackProvider].baseUrl;
     endpoint =
       API_PROVIDERS[fallbackProvider].endpoints[
@@ -26,34 +27,28 @@ export async function fetchStockData(service: QuoteTypes, ticker?: string) {
       ];
   }
 
-  const { value, route, symbol } = getTickerReplaced(
+  const { value, route, symbol, provider } = getTickerReplaced(
     service,
     ticker,
     fallbackProvider
   );
 
   const uri = parseURL(
-    apiUrl,
+    provider ? API_PROVIDERS[provider].baseUrl : apiUrl,
     route ? ({ route } as Endpoint) : endpoint,
     value.toLowerCase()
   );
 
-  const options = {
-    headers: {
-      priority: 'u=0, i',
-    },
-    method: 'GET',
-  };
-
-  const response = await fetch(uri, options);
+  const response = await fetch(uri);
 
   if (!response.ok) {
+    console.error(response);
     throw new Error('Failed to fetch data');
   }
   const body = await response.text();
   const $ = cheerio.load(body);
-  
-  return await extractStockData($, fallbackProvider, symbol);
+
+  return await extractStockData($, provider || fallbackProvider, symbol);
 }
 
 export async function extractStockData(
@@ -69,7 +64,6 @@ export async function extractStockData(
   for (let key in selectors) {
     const { selector, extractor, fallbackSelector, fallbackExtractor } =
       selectors[key] as any;
-
     const selectedExtractor = $(selector).length
       ? extractor
       : fallbackExtractor;
@@ -102,5 +96,5 @@ const getTickerReplaced = (
       return replacement[tickerUpper];
     }
   }
-  return { value: ticker, route: '', symbol: '' };
+  return { value: ticker, route: '', symbol: '', provider: '' as ApiProviders };
 };

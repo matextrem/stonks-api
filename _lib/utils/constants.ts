@@ -8,11 +8,26 @@ export const PROVIDER: ApiProviders =
 export const API_PROVIDERS: ApiProvidersConfig = {
   [ApiProviders.Finviz]: {
     baseUrl: 'https://finviz.com',
-    fallback: ApiProviders.Investing,
     endpoints: {
       stock: {
         route: 'quote.ashx',
         query: 't',
+      },
+      forex: {
+        route: 'currencies',
+        fallback: ApiProviders.Investing,
+      },
+      commodity: {
+        route: 'commodities',
+        fallback: ApiProviders.Investing,
+      },
+      future: {
+        route: 'indices',
+        fallback: ApiProviders.Investing,
+      },
+      crypto: {
+        route: 'crypto',
+        fallback: ApiProviders.CoinMarketCap,
       },
     },
     selectors: {
@@ -80,6 +95,7 @@ export const API_PROVIDERS: ApiProvidersConfig = {
       },
       crypto: {
         route: 'crypto',
+        fallback: ApiProviders.CoinMarketCap,
       },
     },
     selectors: {
@@ -122,19 +138,140 @@ export const API_PROVIDERS: ApiProvidersConfig = {
       },
     },
   },
+  [ApiProviders.CoinMarketCap]: {
+    baseUrl: 'https://www.coinmarketcap.com',
+    endpoints: {
+      stock: {
+        route: 'quote.ashx',
+        query: 't',
+        fallback: ApiProviders.Finviz,
+      },
+      forex: {
+        route: 'currencies',
+        fallback: ApiProviders.Investing,
+      },
+      commodity: {
+        route: 'commodities',
+        fallback: ApiProviders.Investing,
+      },
+      future: {
+        route: 'indices',
+        fallback: ApiProviders.Investing,
+      },
+      crypto: {
+        route: 'currencies',
+      },
+    },
+    selectors: {
+      name: {
+        selector: '[data-role="coin-name"]',
+        extractor: (element: cheerio.Cheerio<cheerio.Element>) =>
+          element.attr('title')?.trim() || element.text().trim(),
+      },
+      ticker: {
+        selector: '[data-role="coin-symbol"]',
+        extractor: (element: cheerio.Cheerio<cheerio.Element>) =>
+          element.text().trim(),
+      },
+      price: {
+        selector: '.sc-f70bb44c-0.jxpCgO',
+        extractor: (element: cheerio.Cheerio<cheerio.Element>) =>
+          element.text().trim().replace(/[$,]/g, ''),
+      },
+      change: {
+        selector: '.sc-f70bb44c-0.flfGQp',
+        extractor: (element: cheerio.Cheerio<cheerio.Element>) => {
+          const calculatePriceChange = (
+            percentageChange: string,
+            originalPrice: string
+          ) => {
+            const percentage =
+              parseFloat(percentageChange.replace('%', '')) / 100;
+            return parseFloat(originalPrice) * percentage;
+          };
+
+          const price = element
+            .find('.sc-f70bb44c-0.jxpCgO')
+            ?.text()
+            .trim()
+            .replace(/[$,]/g, '');
+          const color = element.attr('color');
+          const isPositiveChange = color === 'green';
+          const textContent = element.text().trim();
+          const match = textContent.match(/([\d.]+%)/);
+          if (match) {
+            const change = isPositiveChange ? match[1] : `-${match[1]}`;
+            const priceChange = calculatePriceChange(change, price);
+            return priceChange.toFixed(2);
+          }
+          return 'N/A';
+        },
+      },
+      percentageChange: {
+        selector: '.sc-4984dd93-0',
+        extractor: (element: cheerio.Cheerio<cheerio.Element>) => {
+          const color = element.attr('color');
+          const isPositiveChange = color === 'green';
+          const textContent = element.text().trim();
+          const match = textContent.match(/([\d.]+%)/);
+          if (match) {
+            return isPositiveChange ? match[1] : `-${match[1]}`;
+          }
+          return 'N/A';
+        },
+      },
+    },
+  },
 };
 
 export const QUOTE_REPLACEMENTS: Record<
   ApiProviders,
   {
-    forex?: Record<string, { value: string; route?: string; symbol?: string }>;
+    forex?: Record<
+      string,
+      {
+        value: string;
+        route?: string;
+        symbol?: string;
+        provider?: ApiProviders;
+      }
+    >;
     commodity?: Record<
       string,
-      { value: string; route?: string; symbol?: string }
+      {
+        value: string;
+        route?: string;
+        symbol?: string;
+        provider?: ApiProviders;
+      }
     >;
-    future?: Record<string, { value: string; route?: string; symbol?: string }>;
-    stock?: Record<string, { value: string; route?: string; symbol?: string }>;
-    crypto?: Record<string, { value: string; route?: string; symbol?: string }>;
+    future?: Record<
+      string,
+      {
+        value: string;
+        route?: string;
+        symbol?: string;
+        provider?: ApiProviders;
+      }
+    >;
+    stock?: Record<
+      string,
+      {
+        value: string;
+        route?: string;
+        symbol?: string;
+        provider?: ApiProviders;
+      }
+    >;
+    crypto?: Record<
+      string,
+      {
+        value: string;
+        route?: string;
+        symbol?: string;
+        provider?: ApiProviders;
+      }
+    >;
   }
 > = {
   [ApiProviders.Finviz]: {},
@@ -150,7 +287,12 @@ export const QUOTE_REPLACEMENTS: Record<
       EURGBP: { value: 'eur-gbp' },
       EURJPY: { value: 'eur-jpy' },
       XAUUSD: { value: 'xau-usd' },
-      BTCUSD: { value: 'bitcoin', route: 'crypto', symbol: 'BTC/USD' },
+      BTCUSD: {
+        value: 'bitcoin',
+        route: 'currencies',
+        symbol: 'BTC/USD',
+        provider: ApiProviders.CoinMarketCap,
+      },
     },
     [QuoteTypes.COMMODITY]: {
       SI: { value: 'silver', symbol: 'SI' },
@@ -187,26 +329,28 @@ export const QUOTE_REPLACEMENTS: Record<
       VX: { value: 'us-spx-vix-futures' },
     },
     [QuoteTypes.STOCK]: {},
+  },
+  [ApiProviders.CoinMarketCap]: {
     [QuoteTypes.CRYPTO]: {
-      BTC: { value: 'bitcoin', symbol: 'BTC' },
-      ETH: { value: 'ethereum', symbol: 'ETH' },
-      XRP: { value: 'xrp', symbol: 'XRP' },
-      LTC: { value: 'litecoin', symbol: 'LTC' },
-      ADA: { value: 'cardano', symbol: 'ADA' },
-      BNB: { value: 'bnb', symbol: 'BNB' },
-      DOT: { value: 'polkadot-new', symbol: 'DOT' },
-      XLM: { value: 'stellar', symbol: 'XLM' },
-      USDT: { value: 'tether', symbol: 'USDT' },
-      DOGE: { value: 'dogecoin', symbol: 'DOGE' },
-      LINK: { value: 'chainlink', symbol: 'LINK' },
-      XMR: { value: 'monero', symbol: 'XMR' },
-      TRX: { value: 'tron', symbol: 'TRX' },
-      EOS: { value: 'eos', symbol: 'EOS' },
-      VET: { value: 'vechain', symbol: 'VET' },
-      XTZ: { value: 'tezos', symbol: 'XTZ' },
-      FIL: { value: 'filecoin', symbol: 'FIL' },
-      XEM: { value: 'nem', symbol: 'XEM' },
-      AAVE: { value: 'aave', symbol: 'AAVE' },
+      BTC: { value: 'bitcoin' },
+      ETH: { value: 'ethereum' },
+      XRP: { value: 'xrp' },
+      LTC: { value: 'litecoin' },
+      ADA: { value: 'cardano' },
+      BNB: { value: 'bnb' },
+      DOT: { value: 'polkadot-new' },
+      XLM: { value: 'stellar' },
+      USDT: { value: 'tether' },
+      DOGE: { value: 'dogecoin' },
+      LINK: { value: 'chainlink' },
+      XMR: { value: 'monero' },
+      TRX: { value: 'tron' },
+      EOS: { value: 'eos' },
+      VET: { value: 'vechain' },
+      XTZ: { value: 'tezos' },
+      FIL: { value: 'filecoin' },
+      XEM: { value: 'nem' },
+      AAVE: { value: 'aave' },
     },
   },
 };

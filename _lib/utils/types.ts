@@ -3,11 +3,13 @@ import * as cheerio from 'cheerio';
 export enum ApiProviders {
   Finviz = 'finviz',
   Investing = 'investing.com',
+  CoinMarketCap = 'coinmarketcap',
 }
 
 export interface Endpoint {
   route: string;
   query?: string;
+  fallback?: ApiProviders;
 }
 
 export enum QuoteTypes {
@@ -33,7 +35,6 @@ interface SelectorConfig {
 
 interface ProviderConfig {
   baseUrl: string;
-  fallback?: ApiProviders;
   endpoints: {
     [key: string]: Endpoint;
   };
