@@ -195,7 +195,7 @@ export const API_PROVIDERS: ApiProvidersConfig = {
             ?.text()
             .trim()
             .replace(/[$,]/g, '');
-          const color = element.attr('color');
+          const color = element.find('p').attr('color');
           const isPositiveChange = color === 'green';
           const textContent = element.text().trim();
           const match = textContent.match(/([\d.]+%)/);
