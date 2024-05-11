@@ -48,11 +48,12 @@ export async function fetchStockData(service: QuoteTypes, ticker?: string) {
   const response = await fetch(uri, options);
 
   if (!response.ok) {
+    console.error(response);
     throw new Error('Failed to fetch data');
   }
   const body = await response.text();
   const $ = cheerio.load(body);
-  
+
   return await extractStockData($, fallbackProvider, symbol);
 }
 
