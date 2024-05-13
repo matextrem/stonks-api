@@ -274,7 +274,58 @@ export const QUOTE_REPLACEMENTS: Record<
     >;
   }
 > = {
-  [ApiProviders.Finviz]: {},
+  [ApiProviders.Finviz]: {
+    [QuoteTypes.STOCK]: {
+      SPX: {
+        value: 'us-spx-500',
+        route: 'indices',
+        symbol: 'SPX',
+        provider: ApiProviders.Investing,
+      },
+      DJI: {
+        value: 'us-30',
+        route: 'indices',
+        symbol: 'DJI',
+        provider: ApiProviders.Investing,
+      },
+      IXIC: {
+        value: 'nasdaq-composite',
+        route: 'indices',
+        symbol: 'IXIC',
+        provider: ApiProviders.Investing,
+      },
+      RUT: {
+        value: 'smallcap-2000',
+        route: 'indices',
+        symbol: 'RUT',
+        provider: ApiProviders.Investing,
+      },
+      FTSE: {
+        value: 'uk-100',
+        route: 'indices',
+        symbol: 'FTSE',
+        provider: ApiProviders.Investing,
+      },
+      DAX: {
+        value: 'germany-30',
+        route: 'indices',
+        symbol: 'DAX',
+        provider: ApiProviders.Investing,
+      },
+      FCHI: {
+        value: 'france-40',
+        route: 'indices',
+        symbol: 'FCHI',
+        provider: ApiProviders.Investing,
+      },
+      VIX: {
+        value: 'volatility-s-p-500',
+        route: 'indices',
+        symbol: 'VIX',
+        provider: ApiProviders.Investing,
+      },
+    },
+  },
   [ApiProviders.Investing]: {
     [QuoteTypes.FOREX]: {
       EURUSD: { value: 'eur-usd' },
