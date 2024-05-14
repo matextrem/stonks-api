@@ -1,8 +1,12 @@
-.vercel
-.env
-
+# package directories
 node_modules
+jspm_packages
 yarn.lock
 package-lock.json
 
-build
+# Serverless directories
+.serverless
+
+# esbuild directories
+.esbuild
+.env

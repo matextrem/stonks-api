@@ -4,7 +4,7 @@
 
 # Stonks API
 
-Stonks API is a serverless API developed to fetch stock data from multiple providers using Cheerio, with the initial implementation focusing on [Finvinz](https://finviz.com/). Hosted on Vercel, this API aims to extend support to various financial data providers, making it a versatile tool for accessing stock market data.
+Stonks API is a serverless API developed to fetch stock data from multiple providers using Cheerio, with the initial implementation focusing on [Finvinz](https://finviz.com/). Hosted on AWS using serverless, this API aims to extend support to various financial data providers, making it a versatile tool for accessing stock market data.
 
 ## Features
 
@@ -23,7 +23,7 @@ What things you need to install the software and how to install them:
 `Node version: 18.x`
 
 ```bash
-npm install -g vercel
+npm install -g serverless
 ```
 
 ### Installing
@@ -52,7 +52,7 @@ A step by step series of examples that tell you how to get a development env run
 
 4. Run the development server:
    ```bash
-   npm run dev
+   serverless offline
    ```
 
 ### Usage
@@ -62,27 +62,30 @@ To fetch stock data from the supported providers, navigate to:
 ```
 http://localhost:3000/api/quote/AAPL // Default to type=stock
 ```
+
 Replace `AAPL` with your desired stock ticker.
 
 We also support the following types:
 
-- FOREX 
+- FOREX
 
 ```
 http://localhost:3000/api/quote/EURUSD?type=forex
 ```
+
 - COMMODITIES
 
 ```
 http://localhost:3000/api/quote/GOLD?type=commodity
 ```
-- FUTURES 
+
+- FUTURES
 
 ```
 http://localhost:3000/api/quote/NQ?type=future
 ```
 
-- CRYPTO 
+- CRYPTO
 
 ```
 http://localhost:3000/api/quote/ethereum?type=crypto
@@ -168,7 +171,7 @@ export const API_PROVIDERS: ApiProvidersConfig = {
         },
       },
     },
-  }
+  },
 };
 ```
 

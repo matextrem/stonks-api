@@ -1,0 +1,8 @@
+{
+  "pathParameters": {
+    "ticker": "AAPL"
+  },
+  "queryStringParameters": {
+    "type": "stock"
+  }
+}
