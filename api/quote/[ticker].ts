@@ -3,6 +3,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { QuoteTypes, fetchStockData } from '../../_lib/utils';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  res.setHeader('Cache-Control', 's-maxage=30, stale-while-revalidate=10');
   try {
     const type = (req.query.type as QuoteTypes) ?? QuoteTypes.STOCK;
     const ticker = req.query.ticker as string;
