@@ -13,7 +13,11 @@ export default {
         path: 'quote/{ticker}',
         caching: {
           enabled: true,
-          cacheKeyParameters: ['request.path.ticker'],
+          cacheKeyParameters: [
+            {
+              name: 'request.path.ticker',
+            },
+          ],
         },
         cors: true,
         request: {

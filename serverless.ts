@@ -15,9 +15,11 @@ const serverlessConfiguration: AWS = {
   provider: {
     name: 'aws',
     runtime: 'nodejs18.x',
+    apiName: 'matextrem-stonks-api',
     apiGateway: {
       minimumCompressionSize: 1024,
       shouldStartNameWithService: true,
+      description: 'Serverless API for assets data',
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
@@ -31,6 +33,9 @@ const serverlessConfiguration: AWS = {
     apiGatewayCaching: {
       enabled: true,
       ttlInSeconds: 60,
+      perKeyInvalidation: {
+        requireAuthorization: false,
+      },
     },
     esbuild: {
       bundle: true,
