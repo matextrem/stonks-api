@@ -10,3 +10,7 @@ package-lock.json
 # esbuild directories
 .esbuild
 .env
+
+# vercel
+.vercel/
+build/
