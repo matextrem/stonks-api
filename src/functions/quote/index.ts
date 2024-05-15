@@ -5,7 +5,7 @@ export default {
   environment: {
     API_PROVIDER: '${env:API_PROVIDER}',
   },
-  memorySize: 256,
+  memorySize: 384,
   events: [
     {
       http: {
@@ -13,6 +13,9 @@ export default {
         path: 'quote/{ticker}',
         caching: {
           enabled: true,
+          cacheKeyParameters: {
+            name: 'request.path.ticker',
+          },
         },
         cors: true,
         request: {
