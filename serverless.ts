@@ -7,7 +7,11 @@ const serverlessConfiguration: AWS = {
   app: 'stonks-serverless',
   service: 'stonks-serverless',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild', 'serverless-offline'],
+  plugins: [
+    'serverless-esbuild',
+    'serverless-offline',
+    'serverless-api-gateway-caching',
+  ],
   provider: {
     name: 'aws',
     runtime: 'nodejs18.x',
@@ -24,6 +28,10 @@ const serverlessConfiguration: AWS = {
   functions: { quote },
   package: { individually: true },
   custom: {
+    apiGatewayCaching: {
+      enabled: true,
+      ttlInSeconds: 60,
+    },
     esbuild: {
       bundle: true,
       minify: false,
