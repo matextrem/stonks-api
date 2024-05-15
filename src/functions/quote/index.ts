@@ -11,6 +11,9 @@ export default {
       http: {
         method: 'get',
         path: 'quote/{ticker}',
+        caching: {
+          enabled: true,
+        },
         cors: true,
         request: {
           parameters: {
