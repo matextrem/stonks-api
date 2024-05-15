@@ -5,7 +5,7 @@ export default {
   environment: {
     API_PROVIDER: '${env:API_PROVIDER}',
   },
-  memorySize: 128,
+  memorySize: 256,
   events: [
     {
       http: {
