@@ -405,3 +405,5 @@ export const QUOTE_REPLACEMENTS: Record<
     },
   },
 };
+
+export const ALLOWED_USER_AGENTS = ['QtWebEngine', 'QtWebEngine/6.6.2'];
